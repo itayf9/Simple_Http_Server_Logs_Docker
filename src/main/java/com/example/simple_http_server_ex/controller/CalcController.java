@@ -52,8 +52,9 @@ public class CalcController {
     }
 
     @GetMapping("/stack/size")
-    public int getStackSize () {
-        return argsStackSize;
+    public ResponseEntity<ResultResp> getStackSize () {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResultResp(argsStackSize)) ;
     }
 
     @PutMapping(value = "/stack/arguments",
@@ -119,6 +120,12 @@ public class CalcController {
     }
 
 
+    @DeleteMapping ("/stack/arguments")
+    public int stackRemoveArguments ( @RequestParam ("count") String count) {
+        int x = 10;
+
+        return x;
+    }
 
 
 }
