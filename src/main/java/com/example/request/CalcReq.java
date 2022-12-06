@@ -1,4 +1,4 @@
-package com.example.simple_http_server_ex;
+package com.example.request;
 
 import java.util.List;
 
