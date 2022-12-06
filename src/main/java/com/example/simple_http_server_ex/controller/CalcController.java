@@ -123,10 +123,22 @@ public class CalcController {
 
 
     @DeleteMapping ("/stack/arguments")
-    public int stackRemoveArguments ( @RequestParam ("count") String count) {
-        int x = 10;
+    public ResponseEntity<ResultResp> stackRemoveArguments ( @RequestParam ("count") String countStr) {
 
-        return x;
+        int count = Integer.parseInt(countStr);
+
+        if ( count > argsStackSize) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResultResp( String.format(CalcError.CANNOT_REMOVE_FROM_STACK, count, argsStackSize)));
+        }
+
+        while (count > 0 ) {
+            argsStack.pop();
+            argsStackSize--;
+            count--;
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(new ResultResp(argsStackSize));
     }
 
 

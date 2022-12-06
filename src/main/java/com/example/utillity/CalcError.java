@@ -13,4 +13,6 @@ public class CalcError {
     public static final String FACTORIAL_WITH_NEGATIVE_NUM = "Error while performing operation Factorial: not supported for the negative number";
 
     public static final String NOT_ENOUGH_ARGUMENTS_IN_STACK= "Error: cannot implement operation %s. It requires %d arguments and the stack has only %d arguments";
+
+    public static final String CANNOT_REMOVE_FROM_STACK = "Error: cannot remove %d from the stack. It has only %d arguments";
 }
