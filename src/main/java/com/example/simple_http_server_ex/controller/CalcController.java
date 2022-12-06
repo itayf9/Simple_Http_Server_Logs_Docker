@@ -51,23 +51,25 @@ public class CalcController {
         return ResponseEntity.status(statusCode).body(resultResp);
     }
 
-    @GetMapping("/stack/size")
+    @GetMapping(value = "/stack/size",
+    produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> getStackSize () {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResultResp(argsStackSize)) ;
+                .body(new ResultResp(argsStackSize));
     }
 
     @PutMapping(value = "/stack/arguments",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    public int addArguments(@RequestBody ArgReq argReq) {
+    public ResponseEntity<ResultResp> addArguments(@RequestBody ArgReq argReq) {
 
         for (Integer arg : argReq.getArguments()) {
             argsStack.push(arg);
             argsStackSize++;
         }
 
-        return argsStackSize;
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResultResp(argsStackSize));
     }
 
     @GetMapping(value = "/stack/operate",
