@@ -25,4 +25,20 @@ public enum Operation {
                 return  UNDEFINED;
         }
     }
+
+    public int numOfNeededArgs() {
+        switch (this) {
+            case PLUS:
+            case MINUS:
+            case TIMES:
+            case DIVIDE:
+            case POW:
+                return 2;
+            case ABS:
+            case FACT:
+                return 1;
+            default:
+                return -1;
+        }
+    }
 }
