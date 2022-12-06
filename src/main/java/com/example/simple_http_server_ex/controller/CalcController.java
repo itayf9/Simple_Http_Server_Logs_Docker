@@ -127,12 +127,15 @@ public class CalcController {
 
         int count = Integer.parseInt(countStr);
 
+        // checks if the removal can be applied
         if ( count > argsStackSize) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ResultResp( String.format(CalcError.CANNOT_REMOVE_FROM_STACK, count, argsStackSize)));
         }
 
+        // remove the arguments
         while (count > 0 ) {
+
             argsStack.pop();
             argsStackSize--;
             count--;
