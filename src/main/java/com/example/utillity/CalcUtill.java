@@ -35,7 +35,7 @@ public class CalcUtill {
             case POW :
                 if (parameters.size() > 2) { return new CalcResult(false, "Error: Too many arguments to perform the operation Pow", INVALID); }
                 else if (parameters.size() < 2) { return new CalcResult(false, "Error: Not enough arguments to perform the operation Pow", INVALID); }
-                else { return new CalcResult(true, "" ,  parameters.get(0)^parameters.get(1)); }
+                else { return new CalcResult(true, "" , (int) Math.pow(parameters.get(0), parameters.get(1))); }
 
             case ABS:
                 if (parameters.size() > 1) { return new CalcResult(false, "Error: Too many arguments to perform the operation Abs", INVALID); }
