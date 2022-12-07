@@ -1,7 +1,13 @@
 package com.example.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ResultResp {
+
+    @JsonProperty("result")
     private int result;
+
+    @JsonProperty("error-message")
     private String errorMessage;
 
     public ResultResp(int result) {

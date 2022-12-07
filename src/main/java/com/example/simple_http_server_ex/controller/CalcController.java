@@ -112,6 +112,7 @@ public class CalcController {
                 argsStackSize++;
             }
 
+
             statusCode = HttpStatus.CONFLICT;
             resultResp = new ResultResp(calcResult.getDetails());
         } else {
