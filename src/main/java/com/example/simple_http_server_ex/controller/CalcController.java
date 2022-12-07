@@ -34,21 +34,15 @@ public class CalcController {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> independentCalculation(@RequestBody CalcReq calcReq) {
 
-        HttpStatus statusCode = HttpStatus.OK;
-        ResultResp resultResp;
-
-        System.out.println(calcReq);
         CalcResult calcResult = CalcUtill.performOp(calcReq.getOperation(), calcReq.getArguments());
 
         if (!calcResult.isSucceeded()) {
-            statusCode = HttpStatus.CONFLICT;
-            resultResp = new ResultResp(calcResult.getDetails());
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResultResp(calcResult.getDetails()));
         } else {
-            resultResp = new ResultResp(calcResult.getValue());
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResultResp(calcResult.getValue()));
         }
-
-        System.out.println(resultResp);
-        return ResponseEntity.status(statusCode).body(resultResp);
     }
 
     @GetMapping(value = "/stack/size",
@@ -76,33 +70,30 @@ public class CalcController {
     produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> performOperation(@RequestParam(value = "operation", defaultValue = "undefined") String operationStr) {
 
-        HttpStatus statusCode = HttpStatus.OK;
-        ResultResp resultResp;
-
         Operation operation = Operation.getMatchOperation(operationStr);
 
         if (operation.equals(Operation.UNDEFINED)) {
-            statusCode = HttpStatus.CONFLICT;
-            resultResp = new ResultResp(CalcError.UNKNOWN_OPERATION + operationStr);
-            return ResponseEntity.status(statusCode).body(resultResp);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResultResp(CalcError.UNKNOWN_OPERATION + operationStr));
         }
 
         // the operation is valid
         int numOfNeededArguments = operation.numOfNeededArgs();
 
         if (argsStackSize < numOfNeededArguments) {
-            statusCode = HttpStatus.CONFLICT;
-            resultResp = new ResultResp(String.format(CalcError.NOT_ENOUGH_ARGUMENTS_IN_STACK, operationStr, numOfNeededArguments, argsStackSize));
-            return ResponseEntity.status(statusCode).body(resultResp);
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResultResp(String.format(CalcError.NOT_ENOUGH_ARGUMENTS_IN_STACK, operationStr, numOfNeededArguments, argsStackSize)));
         }
 
         List<Integer> argumentsToCalc = new ArrayList<>();
 
+        // extracts arguments to calculate
         for (int i = 0; i < numOfNeededArguments; i++) {
             argumentsToCalc.add( argsStack.pop());
             argsStackSize--;
         }
 
+        // performs operation
         CalcResult calcResult = CalcUtill.performOp(operationStr, argumentsToCalc);
 
         if (!calcResult.isSucceeded()) {
@@ -112,14 +103,14 @@ public class CalcController {
                 argsStackSize++;
             }
 
-
-            statusCode = HttpStatus.CONFLICT;
-            resultResp = new ResultResp(calcResult.getDetails());
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResultResp(calcResult.getDetails()));
         } else {
-            resultResp = new ResultResp(calcResult.getValue());
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResultResp(calcResult.getValue()));
         }
 
-        return ResponseEntity.status(statusCode).body(resultResp);
+
     }
 
 
