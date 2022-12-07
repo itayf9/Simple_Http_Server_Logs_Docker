@@ -57,6 +57,7 @@ public class CalcController {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> addArguments(@RequestBody ArgReq argReq) {
 
+        // adds the arguments
         for (Integer arg : argReq.getArguments()) {
             argsStack.push(arg);
             argsStackSize++;
@@ -97,7 +98,6 @@ public class CalcController {
         CalcResult calcResult = CalcUtill.performOp(operationStr, argumentsToCalc);
 
         if (!calcResult.isSucceeded()) {
-
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ResultResp(calcResult.getDetails()));
         } else {
