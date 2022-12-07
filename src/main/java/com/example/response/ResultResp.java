@@ -1,26 +1,27 @@
 package com.example.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResultResp {
 
     @JsonProperty("result")
-    private int result;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer result;
 
     @JsonProperty("error-message")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String errorMessage;
 
     public ResultResp(int result) {
         this.result = result;
-        this.errorMessage = "";
     }
 
     public ResultResp(String errorMessage) {
-        this.result = 0;
         this.errorMessage = errorMessage;
     }
 
-    public int getResult() {
+    public Integer getResult() {
         return result;
     }
 

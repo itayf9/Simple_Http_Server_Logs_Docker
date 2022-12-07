@@ -98,11 +98,6 @@ public class CalcController {
 
         if (!calcResult.isSucceeded()) {
 
-            for (int i = argumentsToCalc.size() - 1; i >= 0 ; i--) {
-                argsStack.push(argumentsToCalc.get(i));
-                argsStackSize++;
-            }
-
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ResultResp(calcResult.getDetails()));
         } else {
