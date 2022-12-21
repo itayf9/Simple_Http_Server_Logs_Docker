@@ -2,11 +2,10 @@ package com.example.simple_http_server_ex.controller;
 
 import com.example.request.ArgReq;
 import com.example.request.CalcReq;
-import com.example.utillity.CalcError;
-import com.example.utillity.CalcResult;
-import com.example.utillity.CalcUtill;
+import com.example.utillity.*;
 import com.example.response.ResultResp;
-import com.example.utillity.Operation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +19,8 @@ import java.util.Stack;
 
 @RestController
 public class CalcController {
+
+    public static Logger requestLogger = LogManager.getLogger("request-logger");
 
     private Stack<Integer> argsStack;
     private int argsStackSize;
@@ -37,9 +38,14 @@ public class CalcController {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> independentCalculation(@RequestBody CalcReq calcReq) {
 
+        long start = System.nanoTime();
         this.requestCount++;
+        requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/independent/calculate", "POST")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
         CalcResult calcResult = CalcUtill.performOp(calcReq.getOperation(), calcReq.getArguments());
+
+        long end = System.nanoTime();
+        requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
         if (!calcResult.isSucceeded()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
