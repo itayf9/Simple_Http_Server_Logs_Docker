@@ -24,15 +24,20 @@ public class CalcController {
     private Stack<Integer> argsStack;
     private int argsStackSize;
 
+    private int requestCount;
+
     public CalcController() {
         argsStack = new Stack<>();
         argsStackSize = 0;
+        requestCount = 0;
     }
 
     @PostMapping(value = "/independent/calculate",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> independentCalculation(@RequestBody CalcReq calcReq) {
+
+        this.requestCount++;
 
         CalcResult calcResult = CalcUtill.performOp(calcReq.getOperation(), calcReq.getArguments());
 
@@ -48,6 +53,7 @@ public class CalcController {
     @GetMapping(value = "/stack/size",
     produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> getStackSize () {
+        this.requestCount++;
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResultResp(argsStackSize));
     }
@@ -56,6 +62,8 @@ public class CalcController {
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> addArguments(@RequestBody ArgReq argReq) {
+
+        this.requestCount++;
 
         // adds the arguments
         for (Integer arg : argReq.getArguments()) {
@@ -70,6 +78,8 @@ public class CalcController {
     @GetMapping(value = "/stack/operate",
     produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> performOperation(@RequestParam(value = "operation", defaultValue = "undefined") String operationStr) {
+
+        this.requestCount++;
 
         Operation operation = Operation.getMatchOperation(operationStr);
 
@@ -111,6 +121,8 @@ public class CalcController {
 
     @DeleteMapping ("/stack/arguments")
     public ResponseEntity<ResultResp> stackRemoveArguments ( @RequestParam ("count") String countStr) {
+
+        this.requestCount++;
 
         int count = Integer.parseInt(countStr);
 
