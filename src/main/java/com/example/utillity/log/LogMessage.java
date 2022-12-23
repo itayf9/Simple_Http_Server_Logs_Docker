@@ -1,4 +1,4 @@
-package com.example.utillity;
+package com.example.utillity.log;
 
 public class LogMessage {
 

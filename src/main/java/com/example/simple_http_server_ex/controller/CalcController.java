@@ -4,6 +4,8 @@ import com.example.request.ArgReq;
 import com.example.request.CalcReq;
 import com.example.utillity.*;
 import com.example.response.ResultResp;
+import com.example.utillity.log.LogMessage;
+import com.example.utillity.log.LoggerName;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,10 @@ import java.util.Stack;
 @RestController
 public class CalcController {
 
-    public static Logger requestLogger = LogManager.getLogger("request-logger");
+
+    public static Logger requestLogger = LogManager.getLogger(LoggerName.LOGGER_NAME_REQUEST);
+    public static Logger stackLogger = LogManager.getLogger(LoggerName.LOGGER_NAME_STACK);
+    public static Logger independentLogger = LogManager.getLogger(LoggerName.LOGGER_NAME_INDEPENDENT);
 
     private Stack<Integer> argsStack;
     private int argsStackSize;
@@ -192,6 +197,32 @@ public class CalcController {
         requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
         return responseResult;
+    }
+
+    @GetMapping(name = "/logs/level")
+    public String getCurrentLevelOfLogger ( @RequestParam(name = "logger-name") String loggerName ) {
+
+        String level;
+
+        long start = System.nanoTime();
+        this.requestCount++;
+        requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/logs/level", "GET")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
+        if (loggerName.equals(LoggerName.LOGGER_NAME_REQUEST)) {
+            level = requestLogger.getLevel().name();
+        } else if (loggerName.equals(LoggerName.LOGGER_NAME_STACK)) {
+            level = stackLogger.getLevel().name();
+        } else if (loggerName.equals(LoggerName.LOGGER_NAME_INDEPENDENT)) {
+            level = independentLogger.getLevel().name();
+        } else {
+            level = "Error. This logger does not exist.";
+        }
+
+        long end = System.nanoTime();
+        requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
+        return level;
+
     }
 
 
