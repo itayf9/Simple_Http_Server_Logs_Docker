@@ -153,12 +153,17 @@ public class CalcController {
     @DeleteMapping ("/stack/arguments")
     public ResponseEntity<ResultResp> stackRemoveArguments ( @RequestParam ("count") String countStr) {
 
+        long start = System.nanoTime();
         this.requestCount++;
+        requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/stack/arguments", "DELETE")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
         int count = Integer.parseInt(countStr);
 
         // checks if the removal can be applied
         if ( count > argsStackSize) {
+            long end = System.nanoTime();
+            requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ResultResp( String.format(CalcError.CANNOT_REMOVE_FROM_STACK, count, argsStackSize)));
         }
@@ -171,7 +176,13 @@ public class CalcController {
             count--;
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResultResp(argsStackSize));
+        ResponseEntity<ResultResp> responseResult = ResponseEntity.status(HttpStatus.OK)
+                .body(new ResultResp(argsStackSize));
+
+        long end = System.nanoTime();
+        requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
+        return responseResult;
     }
 
 
