@@ -44,16 +44,18 @@ public class CalcController {
 
         CalcResult calcResult = CalcUtill.performOp(calcReq.getOperation(), calcReq.getArguments());
 
+        ResponseEntity<ResultResp> responseResult;
+        if (!calcResult.isSucceeded()) {
+            responseResult = ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResultResp(calcResult.getDetails()));
+        } else {
+            responseResult = ResponseEntity.status(HttpStatus.OK)
+                    .body(new ResultResp(calcResult.getValue()));
+        }
         long end = System.nanoTime();
         requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
-        if (!calcResult.isSucceeded()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ResultResp(calcResult.getDetails()));
-        } else {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ResultResp(calcResult.getValue()));
-        }
+        return responseResult;
     }
 
     @GetMapping(value = "/stack/size",
@@ -66,7 +68,6 @@ public class CalcController {
                 .body(new ResultResp(argsStackSize));
         long end = System.nanoTime();
         requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
-
         return responseResult;
     }
 
@@ -104,23 +105,29 @@ public class CalcController {
 
         Operation operation = Operation.getMatchOperation(operationStr);
 
+        ResponseEntity<ResultResp> responseResult;
+
         if (operation.equals(Operation.UNDEFINED)) {
+
+            responseResult = ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResultResp(CalcError.UNKNOWN_OPERATION + operationStr));
             long end = System.nanoTime();
             requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ResultResp(CalcError.UNKNOWN_OPERATION + operationStr));
+            return responseResult;
         }
 
         // the operation is valid
         int numOfNeededArguments = operation.numOfNeededArgs();
 
         if (argsStackSize < numOfNeededArguments) {
+
+            responseResult = ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResultResp(String.format(CalcError.NOT_ENOUGH_ARGUMENTS_IN_STACK, operationStr, numOfNeededArguments, argsStackSize)));
             long end = System.nanoTime();
             requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ResultResp(String.format(CalcError.NOT_ENOUGH_ARGUMENTS_IN_STACK, operationStr, numOfNeededArguments, argsStackSize)));
+            return responseResult;
         }
 
         List<Integer> argumentsToCalc = new ArrayList<>();
@@ -134,18 +141,16 @@ public class CalcController {
         // performs operation
         CalcResult calcResult = CalcUtill.performOp(operationStr, argumentsToCalc);
 
-        long end = System.nanoTime();
-        requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
-
         if (!calcResult.isSucceeded()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
+            responseResult = ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ResultResp(calcResult.getDetails()));
         } else {
-            return ResponseEntity.status(HttpStatus.OK)
+            responseResult = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResultResp(calcResult.getValue()));
         }
-
-
+        long end = System.nanoTime();
+        requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+        return responseResult;
 
     }
 
@@ -159,13 +164,17 @@ public class CalcController {
 
         int count = Integer.parseInt(countStr);
 
+        ResponseEntity<ResultResp> responseResult;
+
         // checks if the removal can be applied
         if ( count > argsStackSize) {
+
+            responseResult = ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ResultResp( String.format(CalcError.CANNOT_REMOVE_FROM_STACK, count, argsStackSize)));
             long end = System.nanoTime();
             requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new ResultResp( String.format(CalcError.CANNOT_REMOVE_FROM_STACK, count, argsStackSize)));
+            return responseResult;
         }
 
         // remove the arguments
@@ -176,7 +185,7 @@ public class CalcController {
             count--;
         }
 
-        ResponseEntity<ResultResp> responseResult = ResponseEntity.status(HttpStatus.OK)
+        responseResult = ResponseEntity.status(HttpStatus.OK)
                 .body(new ResultResp(argsStackSize));
 
         long end = System.nanoTime();
