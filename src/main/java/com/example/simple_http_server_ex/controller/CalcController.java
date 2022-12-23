@@ -96,6 +96,8 @@ public class CalcController {
             argsStack.push(arg);
             argsStackSize++;
         }
+        stackLogger.info(String.format(LogMessage.ADDING_ARGUMENTS_LOG_INFO, argReq.getArguments().size(), argsStackSize)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+        stackLogger.debug(String.format(LogMessage.ADDING_ARGUMENTS_LOG_DEBUG, getArgsContentStr(argReq.getArguments()), argsStackSize- argReq.getArguments().size(), argsStackSize)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
         ResponseEntity<ResultResp> responseResult = ResponseEntity.status(HttpStatus.OK)
                 .body(new ResultResp(argsStackSize));
@@ -105,6 +107,7 @@ public class CalcController {
 
         return responseResult;
     }
+
 
     @GetMapping(value = "/stack/operate",
     produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -293,6 +296,19 @@ public class CalcController {
         }
 
         return contentStrBuilder.toString();
+    }
+
+    private String getArgsContentStr(List<Integer> arguments) {
+        StringBuilder contentSrtBuilder = new StringBuilder();
+
+        for (int i = 0; i < arguments.size(); i++) {
+            contentSrtBuilder.append(arguments.get(i));
+            if (i!=arguments.size()-1) {
+                contentSrtBuilder.append(",");
+            }
+        }
+
+        return contentSrtBuilder.toString();
     }
 
 }
