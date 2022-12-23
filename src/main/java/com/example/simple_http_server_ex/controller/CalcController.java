@@ -75,6 +75,8 @@ public class CalcController {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> addArguments(@RequestBody ArgReq argReq) {
 
+        long start = System.nanoTime();
+        requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/stack/arguments", "PUT")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         this.requestCount++;
 
         // adds the arguments
@@ -83,8 +85,13 @@ public class CalcController {
             argsStackSize++;
         }
 
-        return ResponseEntity.status(HttpStatus.OK)
+        ResponseEntity<ResultResp> responseResult = ResponseEntity.status(HttpStatus.OK)
                 .body(new ResultResp(argsStackSize));
+
+        long end = System.nanoTime();
+        requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
+        return responseResult;
     }
 
     @GetMapping(value = "/stack/operate",
