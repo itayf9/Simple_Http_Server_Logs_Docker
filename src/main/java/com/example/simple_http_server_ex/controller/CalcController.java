@@ -75,6 +75,8 @@ public class CalcController {
         requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/stack/size", "GET")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         ResponseEntity<ResultResp> responseResult = ResponseEntity.status(HttpStatus.OK)
                 .body(new ResultResp(argsStackSize));
+        stackLogger.info(String.format(LogMessage.STACK_SIZE_LOG_INFO, argsStackSize)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+        stackLogger.debug(String.format(LogMessage.STACK_CONTENT_LOG_DEBUG, getStackContentStr()));
         long end = System.nanoTime();
         requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         return responseResult;
@@ -160,7 +162,6 @@ public class CalcController {
         long end = System.nanoTime();
         requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         return responseResult;
-
     }
 
 
@@ -275,5 +276,23 @@ public class CalcController {
         return level;
     }
 
+    private String getStackContentStr() {
+        Stack<Integer> s = new Stack<>();
+        StringBuilder contentStrBuilder = new StringBuilder();
+
+        while (!argsStack.isEmpty()) {
+            contentStrBuilder.append(argsStack.peek());
+            s.push(argsStack.pop());
+            if (!argsStack.isEmpty()) {
+                contentStrBuilder.append(",");
+            }
+        }
+
+        while (!s.isEmpty()) {
+            argsStack.push(s.pop());
+        }
+
+        return contentStrBuilder.toString();
+    }
 
 }
