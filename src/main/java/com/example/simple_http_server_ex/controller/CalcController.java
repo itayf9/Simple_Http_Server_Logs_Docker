@@ -57,11 +57,17 @@ public class CalcController {
     }
 
     @GetMapping(value = "/stack/size",
-    produces = {MediaType.APPLICATION_JSON_VALUE})
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> getStackSize () {
+        long start = System.nanoTime();
         this.requestCount++;
-        return ResponseEntity.status(HttpStatus.OK)
+        requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/stack/size", "GET")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+        ResponseEntity<ResultResp> responseResult = ResponseEntity.status(HttpStatus.OK)
                 .body(new ResultResp(argsStackSize));
+        long end = System.nanoTime();
+        requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
+        return responseResult;
     }
 
     @PutMapping(value = "/stack/arguments",
