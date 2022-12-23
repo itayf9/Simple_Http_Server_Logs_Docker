@@ -98,11 +98,16 @@ public class CalcController {
     produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResultResp> performOperation(@RequestParam(value = "operation", defaultValue = "undefined") String operationStr) {
 
+        long start = System.nanoTime();
         this.requestCount++;
+        requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/stack/operate", "GET")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
         Operation operation = Operation.getMatchOperation(operationStr);
 
         if (operation.equals(Operation.UNDEFINED)) {
+            long end = System.nanoTime();
+            requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ResultResp(CalcError.UNKNOWN_OPERATION + operationStr));
         }
@@ -111,6 +116,9 @@ public class CalcController {
         int numOfNeededArguments = operation.numOfNeededArgs();
 
         if (argsStackSize < numOfNeededArguments) {
+            long end = System.nanoTime();
+            requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ResultResp(String.format(CalcError.NOT_ENOUGH_ARGUMENTS_IN_STACK, operationStr, numOfNeededArguments, argsStackSize)));
         }
@@ -126,6 +134,9 @@ public class CalcController {
         // performs operation
         CalcResult calcResult = CalcUtill.performOp(operationStr, argumentsToCalc);
 
+        long end = System.nanoTime();
+        requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
         if (!calcResult.isSucceeded()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ResultResp(calcResult.getDetails()));
@@ -133,6 +144,7 @@ public class CalcController {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ResultResp(calcResult.getValue()));
         }
+
 
 
     }
