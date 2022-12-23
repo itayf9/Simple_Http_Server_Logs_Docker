@@ -6,8 +6,12 @@ import com.example.utillity.*;
 import com.example.response.ResultResp;
 import com.example.utillity.log.LogMessage;
 import com.example.utillity.log.LoggerName;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -223,6 +227,52 @@ public class CalcController {
 
         return level;
 
+    }
+
+    @PutMapping("/logs/level")
+    public String setCurrentLevelOfLogger (@RequestParam(name = "logger-name") String loggerName, @RequestParam(name = "logger-level") String loggerLevel) {
+
+        String level;
+
+        long start = System.nanoTime();
+        this.requestCount++;
+        requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/logs/level", "PUT")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
+        Level levelFromString = Level.getLevel(loggerLevel);
+
+        if (levelFromString == null) { // the level name is invalid
+            level = "Error.this level does not exist";
+        } else {
+            level = levelFromString.name();
+
+            LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+            Configuration config = loggerContext.getConfiguration();
+
+            LoggerConfig loggerConfig;
+
+            if (loggerName.equals(LoggerName.LOGGER_NAME_REQUEST)) {
+                loggerConfig = config.getLoggerConfig(requestLogger.getName());
+            } else if (loggerName.equals(LoggerName.LOGGER_NAME_STACK)) {
+                loggerConfig = config.getLoggerConfig(stackLogger.getName());
+            } else if (loggerName.equals(LoggerName.LOGGER_NAME_INDEPENDENT)) {
+                loggerConfig = config.getLoggerConfig(independentLogger.getName());
+            } else {
+                loggerConfig = null;
+            }
+
+            if (loggerConfig == null) { // the logger name is invalid
+                level = "Error. This logger does not exist.";
+            } else {
+                loggerConfig.setLevel(levelFromString);
+            }
+
+            loggerContext.updateLoggers();
+        }
+
+        long end = System.nanoTime();
+        requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
+        return level;
     }
 
 
