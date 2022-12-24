@@ -79,7 +79,7 @@ public class CalcController {
         ResponseEntity<ResultResp> responseResult = ResponseEntity.status(HttpStatus.OK)
                 .body(new ResultResp(argsStackSize));
         stackLogger.info(String.format(LogMessage.STACK_SIZE_LOG_INFO, argsStackSize)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
-        stackLogger.debug(String.format(LogMessage.STACK_CONTENT_LOG_DEBUG, getStackContentStr()));
+        stackLogger.debug(String.format(LogMessage.STACK_CONTENT_LOG_DEBUG, getStackContentStr())+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         long end = System.nanoTime();
         requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         return responseResult;
@@ -181,18 +181,6 @@ public class CalcController {
     @DeleteMapping ("/stack/arguments")
     public ResponseEntity<ResultResp> stackRemoveArguments ( @RequestParam ("count") String countStr) {
 
-
-        // support only DEBUG INFO ERROR in setLogLevel ?
-
-        // they dont check getLogLevel and setLogLevel with wrong stuff
-        // INFO before DEBUG
-        // put the 'logs' folder in the current working dir
-        // try and catch where needed to do
-
-        // sometimes the requestCount is not good (request.log has #5,#5,#7....)
-        // no output to stack.log
-
-
         long start = System.nanoTime();
         this.requestCount++;
         requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/stack/arguments", "DELETE")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
@@ -244,6 +232,7 @@ public class CalcController {
 
         ResponseEntity<String> responseResult;
 
+        // finds what logger is required
         if (loggerName.equals(LoggerName.LOGGER_NAME_REQUEST)) {
             level = requestLogger.getLevel().name();
             responseResult = ResponseEntity.status(HttpStatus.OK).body(level);
