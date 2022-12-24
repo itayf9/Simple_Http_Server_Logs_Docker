@@ -19,6 +19,12 @@
                 <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %level: %msg%n</Pattern>
             </PatternLayout>
         </File>
+
+        <File name="independentFileAppender" fileName="src/main/java/logs/independent.log" append="false">
+            <PatternLayout>
+                <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %level: %msg%n</Pattern>
+            </PatternLayout>
+        </File>
     </Appenders>
 
     <Loggers>
@@ -29,6 +35,10 @@
 
         <Logger name="stack-logger" level="INFO" additivity="false">
             <AppenderRef ref="stackFileAppender" />
+        </Logger>
+
+        <Logger name="independent-logger" level="DEBUG" additivity="false">
+            <AppenderRef ref="independentFileAppender" />
         </Logger>
 
         <Root level="info">

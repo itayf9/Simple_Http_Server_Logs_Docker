@@ -57,9 +57,12 @@ public class CalcController {
         if (!calcResult.isSucceeded()) {
             responseResult = ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new ResultResp(calcResult.getDetails()));
+            independentLogger.error(String.format(LogMessage.SERVER_ENCOUNTERED_ERR_LOG_ERROR, calcResult.getDetails())+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         } else {
             responseResult = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResultResp(calcResult.getValue()));
+            independentLogger.info(String.format(LogMessage.INDEPENDENT_PERFORM_OPERATION_LOG_INFO, calcReq.getOperation(), calcResult.getValue())+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+            independentLogger.debug(String.format(LogMessage.INDEPENDENT_PERFORM_OPERATION_LOG_DEBUG, calcReq.getOperation(), getArgsContentStr(calcReq.getArguments()), calcResult.getValue())+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         }
         long end = System.nanoTime();
         requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
@@ -164,8 +167,8 @@ public class CalcController {
         } else {
             responseResult = ResponseEntity.status(HttpStatus.OK)
                     .body(new ResultResp(calcResult.getValue()));
-            stackLogger.info(String.format(LogMessage.PERFORM_OPERATION_LOG_INFO, operationStr, calcResult.getValue(), argsStackSize)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
-            stackLogger.debug(String.format(LogMessage.PERFORM_OPERATION_LOG_DEBUG, operationStr, getArgsContentStr(argumentsToCalc), calcResult.getValue())+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+            stackLogger.info(String.format(LogMessage.STACK_PERFORM_OPERATION_LOG_INFO, operationStr, calcResult.getValue(), argsStackSize)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+            stackLogger.debug(String.format(LogMessage.STACK_PERFORM_OPERATION_LOG_DEBUG, operationStr, getArgsContentStr(argumentsToCalc), calcResult.getValue())+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         }
 
         long end = System.nanoTime();

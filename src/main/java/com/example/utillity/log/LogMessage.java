@@ -14,11 +14,15 @@ public class LogMessage {
 
     public static final String ADDING_ARGUMENTS_LOG_DEBUG = "Adding arguments: %s | Stack size before %d | stack size after %d";
 
-    public static final String PERFORM_OPERATION_LOG_INFO = "Performing operation %s. Result is %d | stack size: %d";
+    public static final String STACK_PERFORM_OPERATION_LOG_INFO = "Performing operation %s. Result is %d | stack size: %d";
 
-    public static final String PERFORM_OPERATION_LOG_DEBUG = "Performing operation: %s(%s) = %d";
+    public static final String STACK_PERFORM_OPERATION_LOG_DEBUG = "Performing operation: %s(%s) = %d";
 
     public static final String REMOVING_ARGUMENTS_LOG_INFO = "Removing total %d argument(s) from the stack | Stack size: %d";
+
+    public static final String INDEPENDENT_PERFORM_OPERATION_LOG_INFO = "Performing operation %s. Result is %d";
+
+    public static final String INDEPENDENT_PERFORM_OPERATION_LOG_DEBUG = "Performing operation: %s(%s) = %d";
 
     public static final String SERVER_ENCOUNTERED_ERR_LOG_ERROR = "Server encountered an error ! message: %s";
 
