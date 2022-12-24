@@ -91,8 +91,9 @@ public class CalcController {
     public ResponseEntity<ResultResp> addArguments(@RequestBody ArgReq argReq) {
 
         long start = System.nanoTime();
-        requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/stack/arguments", "PUT")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
         this.requestCount++;
+        requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/stack/arguments", "PUT")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+
 
         // adds the arguments
         for (Integer arg : argReq.getArguments()) {
@@ -185,7 +186,6 @@ public class CalcController {
 
         // they dont check getLogLevel and setLogLevel with wrong stuff
         // INFO before DEBUG
-        // ERROR logs
         // put the 'logs' folder in the current working dir
         // try and catch where needed to do
 

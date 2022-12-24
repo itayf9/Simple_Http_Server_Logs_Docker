@@ -20,7 +20,7 @@
             </PatternLayout>
         </File>
 
-        <File name="independentFileAppender" fileName="./logs/independent.log" append="false">
+        <File name="IndependentFileAppender" fileName="./logs/independent.log" append="false">
             <PatternLayout>
                 <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %level: %msg%n</Pattern>
             </PatternLayout>
@@ -34,11 +34,11 @@
         </Logger>
 
         <Logger name="stack-logger" level="INFO" additivity="false">
-            <AppenderRef ref="stackFileAppender" />
+            <AppenderRef ref="StackFileAppender" />
         </Logger>
 
         <Logger name="independent-logger" level="DEBUG" additivity="false">
-            <AppenderRef ref="independentFileAppender" />
+            <AppenderRef ref="IndependentFileAppender" />
         </Logger>
 
         <Root level="info">
