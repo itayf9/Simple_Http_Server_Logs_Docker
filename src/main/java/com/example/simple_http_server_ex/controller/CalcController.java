@@ -179,7 +179,7 @@ public class CalcController {
 
         // error 403 conflict when problem in getLogLevel and setLoglevel
         // support only DEBUG INFO ERROR in setLogLevel ?
-        // logging opName as got it from user
+
         // they dont check getLogLevel and setLogLevel with wrong stuff
         // INFO before DEBUG
         // ERROR logs
@@ -192,6 +192,7 @@ public class CalcController {
         requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/stack/arguments", "DELETE")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
         int count = Integer.parseInt(countStr);
+        int originalCount = count;
 
         ResponseEntity<ResultResp> responseResult;
 
@@ -202,6 +203,7 @@ public class CalcController {
                     .body(new ResultResp( String.format(CalcError.CANNOT_REMOVE_FROM_STACK, count, argsStackSize)));
             long end = System.nanoTime();
             requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
+            stackLogger.error(String.format(LogMessage.SERVER_ENCOUNTERED_ERR_LOG_ERROR, String.format(CalcError.CANNOT_REMOVE_FROM_STACK, count, argsStackSize))+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
             return responseResult;
         }
@@ -213,6 +215,7 @@ public class CalcController {
             argsStackSize--;
             count--;
         }
+        stackLogger.info(String.format(LogMessage.REMOVING_ARGUMENTS_LOG_INFO, originalCount, argsStackSize)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
         responseResult = ResponseEntity.status(HttpStatus.OK)
                 .body(new ResultResp(argsStackSize));
