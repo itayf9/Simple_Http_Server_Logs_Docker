@@ -8,19 +8,19 @@
             </PatternLayout>
         </Console>
 
-        <File name="RequestFileAppender" fileName="src/main/java/logs/requests.log" append="false">
+        <File name="RequestFileAppender" fileName="./logs/requests.log" append="false">
             <PatternLayout>
                 <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %level: %msg%n</Pattern>
             </PatternLayout>
         </File>
 
-        <File name="StackFileAppender" fileName="src/main/java/logs/stack.log" append="false">
+        <File name="StackFileAppender" fileName="./logs/stack.log" append="false">
             <PatternLayout>
                 <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %level: %msg%n</Pattern>
             </PatternLayout>
         </File>
 
-        <File name="independentFileAppender" fileName="src/main/java/logs/independent.log" append="false">
+        <File name="independentFileAppender" fileName="./logs/independent.log" append="false">
             <PatternLayout>
                 <Pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %level: %msg%n</Pattern>
             </PatternLayout>

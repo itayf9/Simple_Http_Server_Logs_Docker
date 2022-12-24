@@ -180,7 +180,7 @@ public class CalcController {
     @DeleteMapping ("/stack/arguments")
     public ResponseEntity<ResultResp> stackRemoveArguments ( @RequestParam ("count") String countStr) {
 
-        // error 403 conflict when problem in getLogLevel and setLoglevel
+
         // support only DEBUG INFO ERROR in setLogLevel ?
 
         // they dont check getLogLevel and setLogLevel with wrong stuff
@@ -188,6 +188,9 @@ public class CalcController {
         // ERROR logs
         // put the 'logs' folder in the current working dir
         // try and catch where needed to do
+
+        // sometimes the requestCount is not good (request.log has #5,#5,#7....)
+        // no output to stack.log
 
 
         long start = System.nanoTime();
@@ -229,7 +232,7 @@ public class CalcController {
         return responseResult;
     }
 
-    @GetMapping(name = "/logs/level",
+    @GetMapping(value = "/logs/level",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> getCurrentLevelOfLogger ( @RequestParam(name = "logger-name") String loggerName ) {
 
@@ -262,7 +265,7 @@ public class CalcController {
 
     }
 
-    @PutMapping(name = "/logs/level",
+    @PutMapping(value = "/logs/level",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> setCurrentLevelOfLogger (@RequestParam(name = "logger-name") String loggerName, @RequestParam(name = "logger-level") String loggerLevel) {
 
@@ -314,6 +317,10 @@ public class CalcController {
         return responseResult;
     }
 
+    /**
+     * converts a stack to a String
+     * @return String that represents the stack
+     */
     private String getStackContentStr() {
         Stack<Integer> s = new Stack<>();
         StringBuilder contentStrBuilder = new StringBuilder();
@@ -333,6 +340,11 @@ public class CalcController {
         return contentStrBuilder.toString();
     }
 
+    /**
+     * converts a list to a String
+     * @param arguments a List to convert
+     * @return a String that represents the list
+     */
     private String getArgsContentStr(List<Integer> arguments) {
         StringBuilder contentSrtBuilder = new StringBuilder();
 
