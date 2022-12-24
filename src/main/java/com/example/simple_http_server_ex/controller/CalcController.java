@@ -229,8 +229,9 @@ public class CalcController {
         return responseResult;
     }
 
-    @GetMapping(name = "/logs/level")
-    public String getCurrentLevelOfLogger ( @RequestParam(name = "logger-name") String loggerName ) {
+    @GetMapping(name = "/logs/level",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<String> getCurrentLevelOfLogger ( @RequestParam(name = "logger-name") String loggerName ) {
 
         String level;
 
@@ -238,25 +239,32 @@ public class CalcController {
         this.requestCount++;
         requestLogger.info(String.format(LogMessage.INCOMING_REQUEST_LOG_INFO, requestCount, "/logs/level", "GET")+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
+        ResponseEntity<String> responseResult;
+
         if (loggerName.equals(LoggerName.LOGGER_NAME_REQUEST)) {
             level = requestLogger.getLevel().name();
+            responseResult = ResponseEntity.status(HttpStatus.OK).body(level);
         } else if (loggerName.equals(LoggerName.LOGGER_NAME_STACK)) {
             level = stackLogger.getLevel().name();
+            responseResult = ResponseEntity.status(HttpStatus.OK).body(level);
         } else if (loggerName.equals(LoggerName.LOGGER_NAME_INDEPENDENT)) {
             level = independentLogger.getLevel().name();
+            responseResult = ResponseEntity.status(HttpStatus.OK).body(level);
         } else {
             level = "Error. This logger does not exist.";
+            responseResult = ResponseEntity.status(HttpStatus.CONFLICT).body(level);
         }
 
         long end = System.nanoTime();
         requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
-        return level;
+        return responseResult;
 
     }
 
-    @PutMapping("/logs/level")
-    public String setCurrentLevelOfLogger (@RequestParam(name = "logger-name") String loggerName, @RequestParam(name = "logger-level") String loggerLevel) {
+    @PutMapping(name = "/logs/level",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<String> setCurrentLevelOfLogger (@RequestParam(name = "logger-name") String loggerName, @RequestParam(name = "logger-level") String loggerLevel) {
 
         String level;
 
@@ -266,8 +274,11 @@ public class CalcController {
 
         Level levelFromString = Level.getLevel(loggerLevel);
 
+        ResponseEntity<String> responseResult;
+
         if (levelFromString == null) { // the level name is invalid
             level = "Error.this level does not exist";
+            responseResult = ResponseEntity.status(HttpStatus.CONFLICT).body(level);
         } else {
             level = levelFromString.name();
 
@@ -288,17 +299,19 @@ public class CalcController {
 
             if (loggerConfig == null) { // the logger name is invalid
                 level = "Error. This logger does not exist.";
+                responseResult = ResponseEntity.status(HttpStatus.CONFLICT).body(level);
             } else {
                 loggerConfig.setLevel(levelFromString);
+                loggerContext.updateLoggers();
+                responseResult = ResponseEntity.status(HttpStatus.OK).body(level);
             }
 
-            loggerContext.updateLoggers();
         }
 
         long end = System.nanoTime();
         requestLogger.debug(String.format(LogMessage.REQUEST_DURATION_LOG_DEBUG, requestCount, (end - start)/1000000)+String.format(LogMessage.SUFFIX_LOG_ALL, requestCount));
 
-        return level;
+        return responseResult;
     }
 
     private String getStackContentStr() {
